@@ -11,10 +11,11 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // frontend
-    methods: ["GET", "POST"],
-  },
+    origin: "*", // or your frontend domain
+    methods: ["GET", "POST"]
+  }
 });
+
 
 // store rooms in memory
 let rooms = {};
