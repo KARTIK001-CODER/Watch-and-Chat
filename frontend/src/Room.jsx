@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 import YouTube from "react-youtube";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://watch-and-chat.onrender.com");
 
 function Room() {
   const { id } = useParams();
