@@ -11,29 +11,19 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // or your frontend domain
-    methods: ["GET", "POST"]
-  }
+    origin: "http://localhost:5173", // frontend local dev
+    methods: ["GET", "POST"],
+  },
 });
 
-
-// store rooms in memory
 let rooms = {};
-/*
-rooms[roomId] = {
-  users: [],
-  videoId: "abc123",
-  currentTime: 0,
-  state: "pause"
-}
-*/
 
-// create new room
+// create room
 app.get("/create-room", (req, res) => {
   const roomId = nanoid(6);
   rooms[roomId] = {
     users: [],
-    videoId: "dQw4w9WgXcQ", // default
+    videoId: "dQw4w9WgXcQ",
     currentTime: 0,
     state: "pause",
   };
@@ -43,7 +33,7 @@ app.get("/create-room", (req, res) => {
   });
 });
 
-// set custom video for a room
+// set video
 app.post("/set-video", (req, res) => {
   const { roomId, videoId } = req.body;
   if (rooms[roomId]) {
@@ -64,9 +54,7 @@ io.on("connection", (socket) => {
     if (rooms[roomId]) {
       socket.join(roomId);
       rooms[roomId].users.push(socket.id);
-      console.log(`${socket.id} joined room ${roomId}`);
 
-      // send current state to new user
       socket.emit("init-video", {
         videoId: rooms[roomId].videoId,
         currentTime: rooms[roomId].currentTime,
@@ -77,7 +65,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // handle play, pause, seek
   socket.on("video-action", ({ roomId, action, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].currentTime = time;
@@ -86,7 +73,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // chat messages
   socket.on("chat-message", ({ roomId, message }) => {
     io.to(roomId).emit("chat-message", { user: socket.id, message });
   });
