@@ -6,7 +6,7 @@ const { nanoid } = require("nanoid");
 
 const app = express();
 
-// CORS for frontend (Netlify)
+// CORS for frontend (Netlify/Vercel)
 app.use(cors({
   origin: "https://watch-and-chat.vercel.app"
 }));
@@ -33,7 +33,6 @@ app.get("/create-room", (req, res) => {
     state: "pause",
   };
 
-  // Use deployed frontend link here
   res.json({
     roomId,
     link: `https://watch-and-chat.vercel.app/room/${roomId}`,
@@ -72,11 +71,12 @@ io.on("connection", (socket) => {
     }
   });
 
+  // ✅ FIXED: broadcast to ALL (not just others)
   socket.on("video-action", ({ roomId, action, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].currentTime = time;
       rooms[roomId].state = action;
-      socket.to(roomId).emit("video-action", { action, time });
+      io.to(roomId).emit("video-action", { action, time });
     }
   });
 
