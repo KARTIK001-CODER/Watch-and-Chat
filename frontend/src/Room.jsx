@@ -20,11 +20,17 @@ function Room() {
       setMessages((prev) => [...prev, msg]);
     });
 
+    // ✅ FIX: use playerRef instead of undefined player
     socket.on("video-action", ({ action, time }) => {
-      if (playerRef.current) {
-        if (action === "play") playerRef.current.internalPlayer.playVideo();
-        if (action === "pause") playerRef.current.internalPlayer.pauseVideo();
-        if (action === "seek") playerRef.current.internalPlayer.seekTo(time);
+      if (!playerRef.current) return;
+      const player = playerRef.current.internalPlayer;
+
+      if (action === "play") {
+        player.seekTo(time, true);
+        player.playVideo();
+      } else if (action === "pause") {
+        player.seekTo(time, true);
+        player.pauseVideo();
       }
     });
 
@@ -63,10 +69,12 @@ function Room() {
     playerRef.current = { internalPlayer: player };
 
     if (event.data === 1) {
+      // 1 = PLAYING
       player.getCurrentTime().then((time) => {
         socket.emit("video-action", { roomId: id, action: "play", time });
       });
     } else if (event.data === 2) {
+      // 2 = PAUSED
       player.getCurrentTime().then((time) => {
         socket.emit("video-action", { roomId: id, action: "pause", time });
       });
