@@ -8,7 +8,7 @@ const app = express();
 
 // CORS for frontend (Netlify)
 app.use(cors({
-  origin: "https://watch-and-chat.vercel.app/"
+  origin: "https://watch-and-chat.vercel.app"
 }));
 app.use(express.json());
 
