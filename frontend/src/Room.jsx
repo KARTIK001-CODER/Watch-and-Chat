@@ -65,20 +65,21 @@ function Room() {
     setInput("");
   };
 
-  const handleVideoState = (event) => {
-    const player = event.target;
-    playerRef.current = { internalPlayer: player };
+const handleVideoState = (event) => {
+  const player = event.target;
+  playerRef.current = { internalPlayer: player };
 
-    player.getCurrentTime().then((time) => {
-      if (event.data === 1) {
-        socket.emit("video-action", { roomId: id, action: "play", time });
-      } else if (event.data === 2) {
-        socket.emit("video-action", { roomId: id, action: "pause", time });
-      } else if (event.data === 3) {
-        socket.emit("video-action", { roomId: id, action: "seek", time });
-      }
-    });
-  };
+  if (event.data === 1) {
+    // 1 = PLAYING
+    const time = player.getCurrentTime();
+    socket.emit("video-action", { roomId: id, action: "play", time });
+  } else if (event.data === 2) {
+    // 2 = PAUSED
+    const time = player.getCurrentTime();
+    socket.emit("video-action", { roomId: id, action: "pause", time });
+  }
+};
+
 
   const setVideo = async () => {
     const match = linkInput.match(/(?:v=|\.be\/)([a-zA-Z0-9_-]{11})/);
