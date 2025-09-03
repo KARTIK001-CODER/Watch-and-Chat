@@ -6,7 +6,7 @@ function App() {
   const navigate = useNavigate();
 
   const createRoom = async () => {
-    const res = await fetch("http://localhost:5000/create-room");
+    const res = await fetch("https://watch-and-chat.onrender.com/create-room");
     const data = await res.json();
     alert(`Share this link: ${data.link}`);
     navigate(`/room/${data.roomId}`);

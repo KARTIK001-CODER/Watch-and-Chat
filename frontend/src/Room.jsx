@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 import YouTube from "react-youtube";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://watch-and-chat.onrender.com");
 
 function Room() {
   const { id } = useParams();
@@ -81,7 +81,7 @@ function Room() {
     }
     const vid = match[1];
     setVideoId(vid);
-    await fetch("http://localhost:5000/set-video", {
+    await fetch("https://watch-and-chat.onrender.com/set-video", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ roomId: id, videoId: vid }),

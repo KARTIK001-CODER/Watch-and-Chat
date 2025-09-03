@@ -2,16 +2,21 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const { nanoid } = require("nanoid"); // npm install nanoid
+const { nanoid } = require("nanoid");
 
 const app = express();
-app.use(cors());
+
+// CORS for frontend (Netlify)
+app.use(cors({
+  origin: "https://watch-and-chat.vercel.app/"
+}));
 app.use(express.json());
 
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // frontend local dev
+    origin: "https://watch-and-chat.vercel.app",
     methods: ["GET", "POST"],
   },
 });
@@ -27,9 +32,11 @@ app.get("/create-room", (req, res) => {
     currentTime: 0,
     state: "pause",
   };
+
+  // Use deployed frontend link here
   res.json({
     roomId,
-    link: `http://localhost:5173/room/${roomId}`,
+    link: `https://watch-and-chat.vercel.app/room/${roomId}`,
   });
 });
 
@@ -82,6 +89,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(5000, () => {
-  console.log("✅ Backend running on http://localhost:5000");
+// ✅ Use process.env.PORT for deployment
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`✅ Backend running on port ${PORT}`);
 });
