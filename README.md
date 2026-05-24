@@ -1,3 +1,0 @@
-A watch and chat application 
-
-New Features Hurrai!...
